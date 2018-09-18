@@ -4,8 +4,12 @@ const bcrypt = require('bcryptjs');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const config = require('../../config/keys');
+const passport = require('passport');
 //Load User Model
 const User  = require('../models/User');
+const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
+
 
 
 
@@ -20,6 +24,13 @@ router.get('/test',(req,res) => res.json({msg:'Router Works'}));
 //@access Public
 
 router.post('/register',(req,res) => {
+
+    const {errors, isValid} = validateRegisterInput(req.body);
+
+    if(!isValid){
+        return res.status(400).json(errors);
+    }
+
     User.findOne({email: req.body.email})
     .then(user => {
         if(user){
@@ -69,6 +80,11 @@ router.post('/login',(req,res) => {
     const email = req.body.email;
     const password = req.body.password;
 
+    const {errors,isValid} = validateLoginInput(req.body);
+
+    if(!isValid){
+        return res.status(400).json(errors);
+    }
     //Find User by email and then match the password
 
      User.findOne({email})
@@ -104,6 +120,16 @@ router.post('/login',(req,res) => {
          })   
 
 })
+
+//@route GET /api/users/currentuser
+//@desc Return Current User
+//@access Private
+
+router.get('/current',passport.authenticate('jwt',{ session: false }),(req,res) => {
+    if(req.user){
+        res.status(200).json({id: req.user.id,name: req.user.name,email: req.user.email});
+    }
+});
 
 
 module.exports = router;

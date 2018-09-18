@@ -1,9 +1,16 @@
 const express = require('express'); 
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 // Db Config
 const db = require('./config/keys.js').mongoURI;
 const app = express();
+
+//Add passport middleware
+app.use(passport.initialize());
+
+//Passport Config
+require('./config/passport')(passport);
 
 //Add Middleware
 app.use(bodyParser.urlencoded({extended: false}));
