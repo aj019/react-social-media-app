@@ -30,7 +30,7 @@ mongoose
 
 app.get('/', (req,res) => res.send('Hello '));
 app.use('/api/users',users);
-app.use('/api/posts',posts);
+app.use('/api/post',posts);
 app.use('/api/profile',profile);
 
 const port = process.env.PORT || 5000;
