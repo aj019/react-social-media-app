@@ -54,15 +54,14 @@ router.get('/:post_id',passport.authenticate('jwt',{session:false}), (req,res) =
             }
 
             return res.json(post);
-        }).catch(err => res.status(404).json(err))
+        }).catch(err => res.status(404).json({noPostFound:'No Post Found'}))
 });
 
-//@route GET /api/post/all
+//@route GET /api/post
 //@desc Get all posts
 //@access Private
 
 router.get('/',passport.authenticate('jwt',{session:false}), (req,res) => {
-
 
     Post.find()
         .sort({date: -1})
@@ -143,6 +142,66 @@ router.post('/unlike/:post_id',passport.authenticate('jwt',{session: false}), (r
         }).catch(err => res.status(404).json(err));
 
 });
+
+//@route POST /api/post/comment/:post_id
+//@desc Add comment by post id
+//@access Private
+
+router.post('/comment/:post_id',passport.authenticate('jwt',{session: false}),(req,res) =>{
+
+    const {errors,isValid} = validatePostInput(req.body);
+
+    if(!isValid){
+        res.status(404).json(errors);
+    }
+
+
+    Post.findOne({_id: req.params.post_id})
+        .then(post => {
+
+            const newComment = {
+                text: req.body.text,
+                name: req.body.name,
+                avatar: req.body.avatar,
+                user: req.user.id,
+            }
+
+            //Add to comments array
+            post.comments.unshift(newComment);
+            // return res.json(post);
+            post.save().then(post => res.json(post)); 
+
+        }).catch(err => res.status(404).json({postNotFound:'No Post found'}));
+
+})
+
+//@route DELETE /api/post/comment/:post_id/:comment_id
+//@desc DELETE comment by comment & post id
+//@access Private
+
+router.delete('/comment/:post_id/:comment_id',passport.authenticate('jwt',{session: false}),(req,res) =>{
+
+
+    Post.findOne({_id: req.params.post_id})
+        .then(post => {
+
+            if(post.comments.filter(comment => comment._id.toString() === req.params.comment_id).length === 0){
+                return res.status(404).json({commentNotFound:'Comment Not Found'});
+            }
+
+           //Find Index
+           var removeIndex = post.comments.map(comment => comment._id.toString()).indexOf(req.params.comment_id);
+
+           // Remove Index
+           post.comments.splice(removeIndex,1);
+
+           //Save Post
+           post.save().then(post => res.json(post));
+
+        }).catch(err => res.status(404).json({postNotFound:'No Post found'}));
+
+})
+
 
 
 module.exports = router;
