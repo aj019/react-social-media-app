@@ -1,8 +1,12 @@
 import React, { Component } from "react";
-import axios from 'axios';
 import classnames from 'classnames';
+import {registerUser} from '../../actions/authActions'
+import { connect } from "react-redux";
+import {withRouter} from "react-router-dom";
 
-export default class Register extends Component {
+
+
+class Register extends Component {
   constructor() {
     super();
     this.state = {
@@ -35,13 +39,22 @@ export default class Register extends Component {
   
     }
 
-    axios.post('/api/users/register',newUser)
-          .then(res => console.log(res.data))
-          .catch(err => this.setState({errors: err.response.data}))
+    // axios.post('/api/users/register',newUser)
+    //       .then(res => console.log(res.data))
+    //       .catch(err => this.setState({errors: err.response.data}))
 
-    
+    this.props.registerUser(newUser, this.props.history)
 
   }
+
+  componentWillReceiveProps(newProps){
+    if(newProps.errors){
+      this.setState({
+        errors: newProps.errors
+      })
+    }
+  }
+
 
   render() {
 
@@ -123,3 +136,12 @@ export default class Register extends Component {
     );
   }
 }
+
+
+function mapStateToProps(state){
+  return {
+    errors: state.errors
+  }
+}
+
+export default connect(mapStateToProps,{ registerUser})(withRouter(Register));
