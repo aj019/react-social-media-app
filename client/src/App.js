@@ -8,6 +8,31 @@ import Login from './components/auth/Login'
 import Register from './components/auth/Register'
 import Footer from './components/layout/Footer'
 import store from './store'
+import jwt_decode from 'jwt-decode';
+import setAuthToken from './utils/setAuthToken'
+import {setCurrentUser, logoutUser} from './actions/authActions'
+
+//Check for token
+
+if(localStorage.jwtToken){
+  setAuthToken(localStorage.jwtToken);
+  //Decode token and get user info
+  const decoded = jwt_decode(localStorage.jwtToken);
+  // Set Current user and isAuthenticated
+  store.dispatch(setCurrentUser(decoded));
+
+  //If Token expired logout user
+  const currentTime = Date.now()/1000;
+  if(decoded.exp < currentTime){
+      store.dispatch(logoutUser());
+  
+  //TODO: Clear profile
+
+  //Redirect To Login
+  window.location.href = '/login';
+  }
+}
+
 
 class App extends Component {
   render() {
