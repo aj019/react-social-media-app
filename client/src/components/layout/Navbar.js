@@ -20,11 +20,15 @@ import {clearCurrentProfile} from '../../actions/profileActions'
   const authLinks = (
       <ul className="navbar-nav ml-auto">
       <li className="nav-item">
+      <Link className="nav-link" to="/dashboard">Dashboard</Link>
+    </li>
+      <li className="nav-item">
         <a href="#" onClick={this.onLogoutClick.bind(this)} className="nav-link" >
             <img src={user.avatar} className="rounded-circle" alt={user.name} style= {{width:'25px',marginRight:'5px'}} title="You must have a Gavatar to dispay" />
             Logout
         </a>
       </li>
+      
     </ul>
   ); 
 
