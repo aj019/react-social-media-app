@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const path = require('path');
 // Db Config
-const db = require('./config/keys.js').mongoURI;
+const db = require('./config/keys_aws.js').mongoURI;
 const app = express();
 
 //Add passport middleware
@@ -22,6 +22,7 @@ const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
 const posts = require('./routes/api/posts');
 
+console.log("Env ",process.env.NODE_ENV);
 //Connecting to mongoose
 mongoose
     .connect(db)
