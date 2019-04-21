@@ -5,7 +5,7 @@ const passport = require('passport');
 const path = require('path');
 require('dotenv').config();
 // Db Config
-const db = require('./config/keys_aws.js').mongoURI;
+const db = require('./config/keys.js').mongoURI;
 const app = express();
 
 //Add passport middleware
@@ -37,12 +37,12 @@ app.use('/api/post',posts);
 app.use('/api/profile',profile);
 
 //Server static assets if in production
-// if(process.env.NODE_ENV === 'production'){
+if(process.env.NODE_ENV === 'production'){
     app.use(express.static('client/build'));
     app.get('*', (req,res) => {
         res.sendFile(path.resolve(_dirname,'client','build','index.html'));
     })
-// }
+}
 
 const port = process.env.PORT || 5000;
 
