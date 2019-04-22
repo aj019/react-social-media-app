@@ -31,18 +31,21 @@ mongoose
     .catch((err) => console.log(err));
 
 
-app.get('/', (req,res) => res.send('Hello '));
-app.use('/api/users',users);
-app.use('/api/post',posts);
-app.use('/api/profile',profile);
-
 //Server static assets if in production
 if(process.env.NODE_ENV === 'production'){
+    console.log('Serving static files');
     app.use(express.static('client/build'));
     app.get('*', (req,res) => {
         res.sendFile(path.resolve(_dirname,'client','build','index.html'));
     })
 }
+
+
+app.get('/', (req,res) => res.send('Hello '));
+app.use('/api/users',users);
+app.use('/api/post',posts);
+app.use('/api/profile',profile);
+
 
 const port = process.env.PORT || 5000;
 
